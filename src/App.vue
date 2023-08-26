@@ -6,8 +6,13 @@
       :questionsAnswered="questionsAnswered"
       @question-answered="QuestionAnswered"
     />
-    <Result />
-    <button type="button" class="reset-btn" @click.prevent="ResetCount">
+    <Result v-else :results="results" :totalCorrect="point" />
+    <button
+      v-if="questionsAnswered === questionsData.length"
+      type="button"
+      class="reset-btn"
+      @click.prevent="ResetCount"
+    >
       Reset
     </button>
   </div>
@@ -15,9 +20,9 @@
 
 <script lang="ts">
 import { onMounted, Ref, ref } from "vue";
-import type { questionInterface } from "./common/interfaces";
+import type { questionInterface, resultInterface } from "./common/interfaces";
 import Questions from "./components/Questions.vue";
-import { getQuestions } from "./common";
+import { getQuestions, getResult } from "./common";
 import Result from "./components/Result.vue";
 
 export default {
@@ -27,6 +32,7 @@ export default {
   },
   setup() {
     const point: Ref<number> = ref(0);
+    const results: Ref<resultInterface[]> = ref([]);
     const questionsData: Ref<questionInterface[]> = ref([]);
     const questionsAnswered: Ref<number> = ref(0);
 
@@ -34,9 +40,11 @@ export default {
       questionsData.value = await getQuestions().then(
         (res: questionInterface[]) => res
       );
+      results.value = await getResult();
     });
 
     const ResetCount = () => {
+      questionsAnswered.value = 0;
       point.value = 0;
     };
 
@@ -50,6 +58,7 @@ export default {
 
     return {
       point,
+      results,
       questionsData,
       ResetCount,
       questionsAnswered,
