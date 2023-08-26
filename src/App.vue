@@ -4,6 +4,7 @@
       v-if="questionsAnswered < questionsData.length"
       :questions-data="questionsData"
       :questionsAnswered="questionsAnswered"
+      @question-answered="QuestionAnswered"
     />
     <Result />
     <button type="button" class="reset-btn" @click.prevent="ResetCount">
@@ -39,11 +40,20 @@ export default {
       point.value = 0;
     };
 
+    const QuestionAnswered = (is_correct: boolean) => {
+      if (is_correct) {
+        point.value += 1;
+      }
+
+      questionsAnswered.value++;
+    };
+
     return {
       point,
       questionsData,
       ResetCount,
       questionsAnswered,
+      QuestionAnswered,
     };
   },
 };

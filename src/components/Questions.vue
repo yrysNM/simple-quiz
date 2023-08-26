@@ -1,8 +1,16 @@
 <template>
   <div class="questions-ctr">
     <div class="progress">
-      <div class="bar"></div>
-      <div class="status">1 out of 3 questions answered</div>
+      <div
+        class="bar"
+        :style="{
+          width: `${(questionsAnswered / questionsData.length) * 100}%`,
+        }"
+      ></div>
+      <div class="status">
+        {{ questionsAnswered }} out of {{ questionsData.length }} questions
+        answered
+      </div>
     </div>
     <div
       class="single-question"
@@ -17,12 +25,7 @@
         :key="i"
         @click.prevent="selectAnswer(answer.is_correct)"
       >
-        <div
-          class="answer"
-          :style="{
-            //   'background-color': answerData?.is_correct ? 'green' : 'red',
-          }"
-        >
+        <div class="answer" :style="{}">
           {{ answer.text }}
         </div>
       </div>
@@ -42,20 +45,13 @@ export default {
       required: true,
     },
   },
-  setup(props) {
+  setup(props, { emit }) {
     let questionsData = props.questionsData;
 
     const selectAnswer = (is_correct: boolean) => {
+      emit("question-answered", is_correct);
       console.log(is_correct);
     };
-    // const CheckAnswer = (text: tAns,) => {
-
-    //   if (text.is_correct) {
-    //     point.value += 1;
-    //   } else {
-    //     point.value += point.value <= 0 ? 0 : -1;
-    //   }
-    // };
 
     return {
       questionsData,
